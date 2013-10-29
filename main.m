@@ -22,15 +22,17 @@
 clear all
 % 読み込むファイル名（main.mファイルと同じディレクトリにあること）
 % csvfile = 'camui2012_sample_copy.csv';
-csvfile = 'CanSatApage2.csv';
+csvfile = 'fujiq_short_A.csv';
 % ログ開始時においての
 % UTCの西暦月日[year, month, day]JSTではなくUTC時刻での日付なので早朝など注意
-day_ref = [2013, 10, 1];
+day_ref = [2013, 10, 19];
 % time_ref: 日本時間（JST)[HHMMSS.SS] ex.12時34分56.78秒->123456.78
-time_ref = 120000.00;
+time_ref = 130000.00;
 % 緯度経度、楕円体高度[deg,deg,m] 度表示なので注意
 % blh_init = [42.505992,143.456970,30];
-blh_init = [43.5807, 142.002083, 50];
+% 北緯35°29'13" 東経138°46'50"
+% 参考サイト：http://user.numazu-ct.ac.jp/~tsato/webmap/sphere/coordinates/advanced.html
+blh_init = [35.486330, 138.779422, 50];
 % 射点座標（UEN)での初期位置　通常[0 0 0]
 pos_init = [0 0 0];
 % 方位角、仰角[deg]
