@@ -29,6 +29,6 @@ Octaveでクォータニオンを使うときはpackageがあるのでそれを�
 [Octave-Forge Quaternion Package](http://octave.sourceforge.net/quaternion/)
 
 ### 参考
-[Wikipedia - Conversion between quaternions and Euler angles](http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles)
-[Representing Attitude: Euler Angles, Unit Quaternions, and Rotation Vectors](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.110.5134&rep=rep1&type=pdf)
-[Wolfram MathWorld - Quaternion](http://mathworld.wolfram.com/Quaternion.html)
+- [Wikipedia - Conversion between quaternions and Euler angles](http://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles)
+- [Representing Attitude: Euler Angles, Unit Quaternions, and Rotation Vectors](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.110.5134&rep=rep1&type=pdf)
+- [Wolfram MathWorld - Quaternion](http://mathworld.wolfram.com/Quaternion.html)
