@@ -12,37 +12,37 @@
 % - - - -
 % この計算の注意点
 % 射点座標系は本来地球の自転や公転など運動座標系であり、
-% コリオリ力や遠心力などのみかけの力が働くがここでは、座標系は動かないｔ慣性座標系として考えている。
-% したがって誤差が生じる。誤差が気になる場合にはsimple版ではなくfull版を使用してください。
+% コリオリ力や遠心力などのみかけの力が働くがここでは、座標系は動かない慣性座標系として考えている。
 % - - - -
 % 読み込むファイルの形式
 % <time,><acc>,<acc>,<acc>,<gyro>,<gyro>,<gyro><CR><LF>
 % - - - -
 % 2013年9月30日　稲川貴大
 clear all
+
 % 読み込むファイル名（main.mファイルと同じディレクトリにあること）
 % csvfile = 'camui2012_sample_copy.csv';
-csvfile = 'fujiq_short_A.csv';
+csvfile = 'data0090_SNS_cut.csv';
 % ログ開始時においての
 % UTCの西暦月日[year, month, day]JSTではなくUTC時刻での日付なので早朝など注意
-day_ref = [2013, 10, 19];
+day_ref = [2013, 11, 11];
 % time_ref: 日本時間（JST)[HHMMSS.SS] ex.12時34分56.78秒->123456.78
-time_ref = 130000.00;
+time_ref = 111111.11;
 % 緯度経度、楕円体高度[deg,deg,m] 度表示なので注意
 % blh_init = [42.505992,143.456970,30];
 % 北緯35°29'13" 東経138°46'50"
 % 参考サイト：http://user.numazu-ct.ac.jp/~tsato/webmap/sphere/coordinates/advanced.html
-blh_init = [35.486330, 138.779422, 50];
+blh_init = [35.486330, 138.779422, 800]; % 富士急ハイランドドドンパ位置
 % 射点座標（UEN)での初期位置　通常[0 0 0]
 pos_init = [0 0 0];
 % 方位角、仰角[deg]
-azimth_deg_init = -10;
-elevation_deg_init = -90.1;
+azimth_deg_init = 0;
+elevation_deg_init = 0;
 roll_deg_init = 0;	%機体のyz平面の重力方向とｚ軸の角度差が初期ロール角
 % ↑初期ロール角が0のときy軸の重力による加速度はゼロ
 % グラフの開始時間[s]と終了時間[s]の設定
-plot_time_start = 528160;
-plot_time_end = 528225;
+plot_time_start = 40268;
+plot_time_end = 40290;
 
 % ----
 % CAMUI提供のサンプルデータでは
@@ -51,9 +51,9 @@ plot_time_end = 528225;
 % time_line = 1;
 % acc_roll_line  = 3; acc_pitch_line  = 2; acc_yaw_line  = 4;
 % gyro_roll_line = 5; gyro_pitch_line = 7; gyro_yaw_line = 6;
-time_line = 2;
-acc_roll_line  = 3; acc_pitch_line  = 4; acc_yaw_line  = 5;
-gyro_roll_line = 6; gyro_pitch_line = 7; gyro_yaw_line = 8;
+time_line = 1;
+acc_roll_line  = 7; acc_pitch_line  = 6; acc_yaw_line  = 8;
+gyro_roll_line = 2; gyro_pitch_line = 3; gyro_yaw_line = 4;
 
 % 中央値とスケールファクタ[LSB/(deg/s),LSB/g]
 % acc_mean = 0;
@@ -61,16 +61,27 @@ gyro_roll_line = 6; gyro_pitch_line = 7; gyro_yaw_line = 8;
 % gyro_mean = 0;
 % gyro_scale = 1;
 
+% 目で見て平均値を求める方法
+acc_x_mean = -2.5; acc_y_mean = 0; acc_z_mean = -11;
+acc_scale = 1/0.0156;
+gyro_x_mean = 15.2; gyro_y_mean = -4.32; gyro_z_mean = -5.18
+gyro_scale = 1/0.07;
 
-acc_x_mean = 32768; acc_y_mean = 32768; acc_z_mean = 32768;
-acc_scale = 2048;
-gyro_x_mean = 32755; gyro_y_mean = 32783; gyro_z_mean = 32769;
-gyro_scale = 16.4;
+% 動きがない時を使って平均化する方法 calibrationfunc
+cali_start = 1; % 行数
+cali_end = 250;
+calibration_ONOFF = 0; % ON/OFFは1/0
+
+% 重力ベクトルと初期加速ベクトルを取得する行を指定
+gravity_line = 1:200;
+initial_line = 450;
+
+
 % ----
 % プロット、GPSアウトプットのON/OFF　ON:1,OFF:0
 SHOW_PLOT = 0;
 OUTPUT_GPS = 1;
-output_GPS_filename = 'CanSatsample';
+output_GPS_filename = 'Pocky';
 % =======設定項目は以上、以下定数======
 % earth_rate = [0 0 7.2921151467e-5];
 
@@ -93,6 +104,12 @@ vel_launch_prev = [0 0 0];
 pos_launch_prev = pos_init;
 quat_prev = quat_body2launch';	%クォータニオンの初期化
 % dcm_prev = zeros(3);
+
+if calibration_ONOFF == 1
+	gyro_x_mean = mean(csv(cali_start:cali_end,gyro_roll_line));
+	gyro_y_mean = mean(csv(cali_start:cali_end,gyro_pitch_line));
+	gyro_z_mean = mean(csv(cali_start:cali_end,gyro_yaw_line));
+end
 
 % メインループ
 line = 2;
@@ -118,12 +135,29 @@ pos_ECEF = zeros(csv_length,3);
 pos_blh = zeros(csv_length,3);
 pos_blh(1,:) = blh_init;	% 緯度経度高度の初期化
 
+% ============
+sensor2body;
+
+% ============
+
+% FIRフィルタ（単純移動平均フィルタ）
+m = 1;a = 1; %項数、係数
+b = ones(1,m);
+% acc_x = filter(b,a,acc_x);
+acc_x = sgolayfilt(acc_x, 3, 5);
+acc_y = filter(b,a,acc_y);
+acc_z = filter(b,a,acc_z);
+gyro_x = filter(b,a,gyro_x);
+gyro_y = filter(b,a,gyro_y);
+gyro_z = filter(b,a,gyro_z);
+% ============
+
 for i =  2:csv_length
 	acc = [acc_x(i), acc_y(i), acc_z(i)] .* 9.8;
 	gyro_deg = [gyro_x(i), gyro_y(i), gyro_z(i)];
 	gyro = deg2rad(gyro_deg);
 	if i == 1
-		dt = time(i);
+		dt = time(i+1) - time(i);
 	else
 		dt = time(i) - time(i-1);
 	end

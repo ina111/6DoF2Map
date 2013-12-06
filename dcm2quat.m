@@ -1,10 +1,10 @@
 function quat = dcm2quat(dcm)
-	% 方向余弦行列からクォータニオンを算出
-	% quat:クォータニオン, dcm:方向余弦行列
-	% degreeにするにはrad2degの	matlab関数を使う
-	% 以下参考
-	% http://www.tu-berlin.de/fileadmin/fg169/miscellaneous/Quaternions.pdf
-	% http://www.mss.co.jp/technology/report/pdf/19-08.pdf
+% 	% 方向余弦行列からクォータニオンを算出
+% 	% quat:クォータニオン, dcm:方向余弦行列
+% 	% degreeにするにはrad2degの	matlab関数を使う
+% 	% 以下参考
+% 	% http://www.tu-berlin.de/fileadmin/fg169/miscellaneous/Quaternions.pdf
+% 	% http://www.mss.co.jp/technology/report/pdf/19-08.pdf
 	q0 = 0.5 * sqrt(1 + dcm(1,1) + dcm(2,2) + dcm(3,3));
 	q1 = 0.5 * sqrt(1 + dcm(1,1) - dcm(2,2) - dcm(3,3));
 	q2 = 0.5 * sqrt(1 - dcm(1,1) + dcm(2,2) - dcm(3,3));
@@ -32,4 +32,8 @@ function quat = dcm2quat(dcm)
 				0.25 / q3 * (dcm(3,1) + dcm(1,3));...
 				0.25 / q3 * (dcm(2,3) + dcm(3,2));...
 				q3];
+	end
+
+	if quat(1) < 0
+		quat = - quat;
 	end
