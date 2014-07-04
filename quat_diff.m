@@ -1,9 +1,9 @@
 function dq = quat_diff(quat, omega, dt)
-	% ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã®å¾®åˆ†æ–¹ç¨‹å¼
-	% dq:ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³å¾®å°å¤‰åŒ–é‡
-	% quat:ãã®æ™‚ã®ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
-	% omega:è¨ˆæ¸¬ã—ãŸè§’é€Ÿåº¦[rad/s]
-	% dt:ã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°é–“éš”[s]
+	% ƒNƒH[ƒ^ƒjƒIƒ“‚Ì”÷•ª•û’öŽ®
+	% dq:ƒNƒH[ƒ^ƒjƒIƒ“”÷¬•Ï‰»—Ê
+	% quat:‚»‚ÌŽž‚ÌƒNƒH[ƒ^ƒjƒIƒ“
+	% omega:Œv‘ª‚µ‚½Šp‘¬“x[rad/s]
+	% dt:ƒTƒ“ƒvƒŠƒ“ƒOŠÔŠu[s]
 	% dq = 0.5 * [-q(2) -q(3) -q(4);...
 	% 			 q(1)  q(4) -q(3);...
 	% 			-q(4)  q(1)  q(2);...

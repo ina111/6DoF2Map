@@ -1,13 +1,13 @@
 function [x, y, z] = launch2ecef(u, e, n, xr, yr, zr)
-	% å°„ç‚¹åº§æ¨™ç³»ã‹ã‚‰ECEFåº§æ¨™ç³»ã¸åº§æ¨™å¤‰æ›
+	% Ë“_À•WŒn‚©‚çECEFÀ•WŒn‚ÖÀ•W•ÏŠ·
 	% L:u,e,n[m]
 	% ECEF:x,y,z[m]
-	% ECEFåº§æ¨™ä¸Šã®å‚ç…§ä½ç½®ï¼ˆå°„ç‚¹ï¼‰:xr,yr,zr[m]
-	% å°„ç‚¹ã®ç·¯åº¦çµŒåº¦
+	% ECEFÀ•Wã‚ÌQÆˆÊ’uiË“_j:xr,yr,zr[m]
+	% Ë“_‚ÌˆÜ“xŒo“x
 	[phi, ramda, height] = ecef2blh(xr,yr,zr);
 	phi = deg2rad(phi);
 	ramda = deg2rad(ramda);
-	% ECEFã‹ã‚‰launchåº§æ¨™ã¸ã®å›è»¢ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ç”Ÿæˆ
+	% ECEF‚©‚çlaunchÀ•W‚Ö‚Ì‰ñ“]ƒNƒH[ƒ^ƒjƒIƒ“¶¬
 	% quat_ecef2launch = quat_product(rot2quat(ramda, [0 0 1]), rot2quat(phi, [0 1 0]));
 	% quat_launch2ecef = quat_conj(quat_ecef2launch);
 	% xyz = quat_product(quat_ecef2launch, [0 u e n]);

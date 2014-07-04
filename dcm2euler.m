@@ -1,7 +1,7 @@
 function euler = dcm2euler(dcm)
-	% æ–¹å‘ä½™å¼¦è¡Œåˆ—ã‹ã‚‰ã‚ªã‚¤ãƒ©ãƒ¼è§’ã‚’ç®—å‡º
-	% euler:ã‚ªã‚¤ãƒ©ãƒ¼è§’[rad], dcm:æ–¹å‘ä½™å¼¦è¡Œåˆ—
-	% degreeã«ã™ã‚‹ã«ã¯rad2degã®	matlabé–¢æ•°ã‚’ä½¿ã†
+	% •ûŒü—]Œ·s—ñ‚©‚çƒIƒCƒ‰[Šp‚ðŽZo
+	% euler:ƒIƒCƒ‰[Šp[rad], dcm:•ûŒü—]Œ·s—ñ
+	% degree‚É‚·‚é‚É‚Írad2deg‚Ì	matlabŠÖ”‚ðŽg‚¤
 	euler = [atan2(dcm(2,3), dcm(3,3));...
 			 atan2(-dcm(1,3), sqrt(dcm(2,3)^2 + dcm(3,3)^2));...
 			 atan2(dcm(1,2), dcm(1,1))];

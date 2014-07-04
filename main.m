@@ -1,51 +1,51 @@
-% 加速度ジャイロの6軸の慣性計測の値から座標変換を駆使して速度と位置を求める
-% ストラップダウン式の慣性計測ユニット（IMU)の値は機体座標系での計測値なので
-% 慣性座標系での値に変換する。
-% また、便利のために緯度経度高度に変換し、Google Earthで表示できるようにする。
+% �����x�W���C����6���̊����v���̒l������W�ϊ�����g���đ��x�ƈʒu�����߂�
+% �X�g���b�v�_�E�����̊����v�����j�b�g�iIMU)�̒l�͋@�̍��W�n�ł̌v���l�Ȃ̂�
+% �������W�n�ł̒l�ɕϊ�����B
+% �܂��A�֗��̂��߂Ɉܓx�o�x���x�ɕϊ����AGoogle Earth�ŕ\���ł���悤�ɂ���B
 % - - - -
-% 使用する座標系
-% 機体座標系(Body Frame)：機体に固定された座標系。機体ノーズ方向をx軸としている
-% 射点座標系（UEN):射点中心の地表に平行な座標系。X-Y-ZをUp-East-Northに合わせている。
-% 地球中心地球固定座標系(ECEF)：地球中心を原点にx軸を緯度経度0度、ｚ軸を自転軸に定めた運動座標系
-% 地球中心慣性座標（ECI)：地球中心の慣性座標ｚ軸は自転軸。
-% 測地座標系(BLH)：緯度、経度、楕円体高度の座標系。直交座標系ではない。WGS-84準拠
+% �g�p������W�n
+% �@�̍��W�n(Body Frame)�F�@�̂ɌŒ肳�ꂽ���W�n�B�@�̃m�[�Y������x���Ƃ��Ă���
+% �˓_���W�n�iUEN):�˓_���S�̒n�\�ɕ��s�ȍ��W�n�BX-Y-Z��Up-East-North�ɍ��킹�Ă���B
+% �n�����S�n���Œ���W�n(ECEF)�F�n�����S�����_��x�����ܓx�o�x0�x�A���������]���ɒ�߂��^�����W�n
+% �n�����S�������W�iECI)�F�n�����S�̊������W�����͎��]���B
+% ���n���W�n(BLH)�F�ܓx�A�o�x�A�ȉ~�̍��x�̍��W�n�B�������W�n�ł͂Ȃ��BWGS-84����
 % - - - -
-% この計算の注意点
-% 射点座標系は本来地球の自転や公転など運動座標系であり、
-% コリオリ力や遠心力などのみかけの力が働くがここでは、座標系は動かないｔ慣性座標系として考えている。
-% したがって誤差が生じる。誤差が気になる場合にはsimple版ではなくfull版を使用してください。
+% ���̌v�Z�̒��ӓ_
+% �˓_���W�n�͖{���n���̎��]����]�Ȃǉ^�����W�n�ł���A
+% �R���I���͂≓�S�͂Ȃǂ݂̂����̗͂������������ł́A���W�n�͓����Ȃ����������W�n�Ƃ��čl���Ă���B
+% ���������Č덷��������B�덷���C�ɂȂ�ꍇ�ɂ�simple�łł͂Ȃ�full�ł��g�p���Ă��������B
 % - - - -
-% 読み込むファイルの形式
+% �ǂݍ��ރt�@�C���̌`��
 % <time,><acc>,<acc>,<acc>,<gyro>,<gyro>,<gyro><CR><LF>
 % - - - -
-% 2013年9月30日　稲川貴大
+% 2013�N9��30���@���M��
 clear all
-% 読み込むファイル名（main.mファイルと同じディレクトリにあること）
+% �ǂݍ��ރt�@�C�����imain.m�t�@�C���Ɠ����f�B���N�g���ɂ��邱�Ɓj
 % csvfile = 'camui2012_sample_copy.csv';
 csvfile = 'CanSatApage2.csv';
-% ログ開始時においての
-% UTCの西暦月日[year, month, day]JSTではなくUTC時刻での日付なので早朝など注意
+% ���O�J�n���ɂ����Ă�
+% UTC�̐����[year, month, day]JST�ł͂Ȃ�UTC�����ł̓��t�Ȃ̂ő����Ȃǒ���
 day_ref = [2013, 10, 1];
-% time_ref: 日本時間（JST)[HHMMSS.SS] ex.12時34分56.78秒->123456.78
+% time_ref: ���{���ԁiJST)[HHMMSS.SS] ex.12��34��56.78�b->123456.78
 time_ref = 120000.00;
-% 緯度経度、楕円体高度[deg,deg,m] 度表示なので注意
+% �ܓx�o�x�A�ȉ~�̍��x[deg,deg,m] �x�\���Ȃ̂Œ���
 % blh_init = [42.505992,143.456970,30];
 blh_init = [43.5807, 142.002083, 50];
-% 射点座標（UEN)での初期位置　通常[0 0 0]
+% �˓_���W�iUEN)�ł̏����ʒu�@�ʏ�[0 0 0]
 pos_init = [0 0 0];
-% 方位角、仰角[deg]
+% ���ʊp�A�p[deg]
 azimth_deg_init = -10;
 elevation_deg_init = -90.1;
-roll_deg_init = 0;	%機体のyz平面の重力方向とｚ軸の角度差が初期ロール角
-% ↑初期ロール角が0のときy軸の重力による加速度はゼロ
-% グラフの開始時間[s]と終了時間[s]の設定
+roll_deg_init = 0;	%�@�̂�yz���ʂ̏d�͕����Ƃ����̊p�x�����������[���p
+% ���������[���p��0�̂Ƃ�y���̏d�͂ɂ������x�̓[��
+% �O���t�̊J�n����[s]�ƏI������[s]�̐ݒ�
 plot_time_start = 528160;
 plot_time_end = 528225;
 
 % ----
-% CAMUI提供のサンプルデータでは
-% 加速度：ピッチ、ロール、ヨーの順
-% ジャイロ：ロール、ヨー、ピッチの順
+% CAMUI�񋟂̃T���v���f�[�^�ł�
+% �����x�F�s�b�`�A���[���A���[�̏�
+% �W���C���F���[���A���[�A�s�b�`�̏�
 % time_line = 1;
 % acc_roll_line  = 3; acc_pitch_line  = 2; acc_yaw_line  = 4;
 % gyro_roll_line = 5; gyro_pitch_line = 7; gyro_yaw_line = 6;
@@ -53,7 +53,7 @@ time_line = 2;
 acc_roll_line  = 3; acc_pitch_line  = 4; acc_yaw_line  = 5;
 gyro_roll_line = 6; gyro_pitch_line = 7; gyro_yaw_line = 8;
 
-% 中央値とスケールファクタ[LSB/(deg/s),LSB/g]
+% �����l�ƃX�P�[���t�@�N�^[LSB/(deg/s),LSB/g]
 % acc_mean = 0;
 % acc_scale = 1;
 % gyro_mean = 0;
@@ -65,39 +65,39 @@ acc_scale = 2048;
 gyro_x_mean = 32755; gyro_y_mean = 32783; gyro_z_mean = 32769;
 gyro_scale = 16.4;
 % ----
-% プロット、GPSアウトプットのON/OFF　ON:1,OFF:0
+% �v���b�g�AGPS�A�E�g�v�b�g��ON/OFF�@ON:1,OFF:0
 SHOW_PLOT = 0;
 OUTPUT_GPS = 1;
 output_GPS_filename = 'CanSatsample';
-% =======設定項目は以上、以下定数======
+% =======�ݒ荀�ڂ͈ȏ�A�ȉ��萔======
 % earth_rate = [0 0 7.2921151467e-5];
 
 % =====
 
-% ファイルから加速度による移動量とジャイロによる回転角を読み込む。
+% �t�@�C����������x�ɂ��ړ��ʂƃW���C���ɂ���]�p��ǂݍ��ށB
 csv = csvread(csvfile);
 csv_length = length(csv);
 
-% ECEF座標系においけるログ開始時の位置[m]
+% ECEF���W�n�ɂ������郍�O�J�n���̈ʒu[m]
 [xr,yr,zr] = blh2ecef(blh_init(1),blh_init(2),blh_init(3));
-% 初期方位角と仰角とロール角をクォータニオン表示
+% �������ʊp�Ƌp�ƃ��[���p���N�H�[�^�j�I���\��
 quat_elevation = rot2quat(elevation_deg_init - 90, [0 0 1]);
 quat_azimth  = rot2quat(azimth_deg_init - 90, [1 0 0]);
 quat_roll = rot2quat(roll_deg_init, [1 0 0]);
 quat_body2launch = quat_product(quat_elevation, quat_azimth);
 quat_body2launch = quat_product(quat_body2launch, quat_roll);
-% 射点座標系での速度、位置、クォータニオン、方向余弦行列(DCM)の初期化
+% �˓_���W�n�ł̑��x�A�ʒu�A�N�H�[�^�j�I���A�����]���s��(DCM)�̏�����
 vel_launch_prev = [0 0 0];
 pos_launch_prev = pos_init;
-quat_prev = quat_body2launch';	%クォータニオンの初期化
+quat_prev = quat_body2launch';	%�N�H�[�^�j�I���̏�����
 % dcm_prev = zeros(3);
 
-% メインループ
+% ���C�����[�v
 line = 2;
-% acc_x,gyro_xはノーズ方向（ロール変化させる方向）
-% acc_y,gyro_yはピッチ変化させる方向
-% acc_z,gyro_zはヨー変化させる方向
-% 平均とスケールファクターを考慮し、[g][deg/s]に変換
+% acc_x,gyro_x�̓m�[�Y�����i���[���ω�����������j
+% acc_y,gyro_y�̓s�b�`�ω����������
+% acc_z,gyro_z�̓��[�ω����������
+% ���ςƃX�P�[���t�@�N�^�[���l�����A[g][deg/s]�ɕϊ�
 time = csv(:,time_line);
 acc_x = (csv(:,acc_roll_line) - acc_x_mean) ./ acc_scale;
 acc_y = (csv(:,acc_pitch_line) - acc_y_mean) ./ acc_scale;
@@ -105,7 +105,7 @@ acc_z = (csv(:,acc_yaw_line) - acc_z_mean) ./ acc_scale;
 gyro_x = (csv(:,gyro_roll_line) - gyro_x_mean) ./ gyro_scale;
 gyro_y = (csv(:,gyro_pitch_line)- gyro_y_mean) ./ gyro_scale;
 gyro_z = (csv(:,gyro_yaw_line) - gyro_z_mean) ./ gyro_scale;
-% 配列の初期化
+% �z��̏�����
 quat_delta = zeros(csv_length,4);
 quat_body2launch = zeros(csv_length,4);
 euler_rad = zeros(csv_length,3);
@@ -114,7 +114,7 @@ vel_launch = zeros(csv_length,3);
 pos_launch = zeros(csv_length,3);
 pos_ECEF = zeros(csv_length,3);
 pos_blh = zeros(csv_length,3);
-pos_blh(1,:) = blh_init;	% 緯度経度高度の初期化
+pos_blh(1,:) = blh_init;	% �ܓx�o�x���x�̏�����
 
 for i =  2:csv_length
 	acc = [acc_x(i), acc_y(i), acc_z(i)] .* 9.8;
@@ -141,7 +141,7 @@ for i =  2:csv_length
 end
 
 % /////
-	% ６DOFのセンサデータからGPSデータ（NMEA GPGGA）のデータ列に変換し、outputディレクトリにstr.nmeaで保存
+	% �UDOF�̃Z���T�f�[�^����GPS�f�[�^�iNMEA GPGGA�j�̃f�[�^��ɕϊ����Aoutput�f�B���N�g����str.nmea�ŕۑ�
 % /////
 if OUTPUT_GPS
 	% str = 'sample';
@@ -204,7 +204,7 @@ title('position_launch[m/s]')
 legend('U','E','N');
 grid on
 
-% 3Dプロットに表示する数
+% 3D�v���b�g�ɕ\�����鐔
 num_3d_plot = 5000;
 pos_launch = pos_launch(1:num_3d_plot,:);
 

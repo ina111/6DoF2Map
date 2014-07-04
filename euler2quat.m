@@ -1,6 +1,6 @@
 function q = euler2quat(euler)
-% ã‚ªã‚¤ãƒ©ãƒ¼è§’ã‹ã‚‰ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã«å¤‰æ›
-% z-y-zå½¢å¼
+% ƒIƒCƒ‰[Šp‚©‚çƒNƒH[ƒ^ƒjƒIƒ“‚É•ÏŠ·
+% z-y-zŒ`Ž®
 	s = sin(euler./2);
 	c = cos(euler./2);
 	q = [c(1)*c(2)*c(3) + s(1)*s(2)*s(3);...

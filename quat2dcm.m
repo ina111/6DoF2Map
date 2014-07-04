@@ -1,7 +1,7 @@
 function dcm = quat2dcm(q)
-% ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰æ–¹å‘ä½™å¼¦è¡Œåˆ—ã‚’è¨ˆç®—
-% dcm:æ–¹å‘ä½™å¼¦è¡Œåˆ— size(dcm) = [3 3]
-% q:ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³[q0 q1 q2 q3]
+% ƒNƒH[ƒ^ƒjƒIƒ“‚©‚ç•ûŒü—]Œ·s—ñ‚ðŒvŽZ
+% dcm:•ûŒü—]Œ·s—ñ size(dcm) = [3 3]
+% q:ƒNƒH[ƒ^ƒjƒIƒ“[q0 q1 q2 q3]
 q = quat_normalize(q);
 q2 = q.^2;
 dcm = [ q2(1) + q2(2) - q2(3) - q2(4),...

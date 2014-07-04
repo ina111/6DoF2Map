@@ -1,10 +1,10 @@
 function [v_I, r_I] = position_eq(v_I_0,r_I_0,dt,a,dcm)
-	% åŠ é€Ÿåº¦ã¨DCMã‹ã‚‰é€Ÿåº¦ã¨ä½ç½®ã‚’è¨ˆç®—
-	% dt:æ™‚é–“é–“éš”[s], a:åŠ é€Ÿåº¦[m/s2], dcm:æ–¹å‘ä½™å¼¦è¡Œåˆ—
+	% ‰Á‘¬“x‚ÆDCM‚©‚ç‘¬“x‚ÆˆÊ’u‚ðŒvŽZ
+	% dt:ŽžŠÔŠÔŠu[s], a:‰Á‘¬“x[m/s2], dcm:•ûŒü—]Œ·s—ñ
 	if v_I_0 == NaN
 		v_I_0 = 0;
 	end
-	g = 9.8; % é‡åŠ›åŠ é€Ÿåº¦
+	g = 9.8; % d—Í‰Á‘¬“x
 	v_I = v_I_0' + dcm * a' * dt + [-g;0;0] * dt;
 	r_I = r_I_0' + v_I * dt;
 end

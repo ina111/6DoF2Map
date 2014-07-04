@@ -1,7 +1,7 @@
 function dcm = euler2dcm(euler)
-% ã‚ªã‚¤ãƒ©ãƒ¼è§’ã‹ã‚‰æ–¹å‘ä½™å¼¦è¡Œåˆ—ã‚’ç®—å‡º
-% dcm:æ–¹å‘ä½™å¼¦è¡Œåˆ—ã€euler:ã‚ªã‚¤ãƒ©ãƒ¼è§’[rad]
-% z-y-xå½¢å¼
+% ƒIƒCƒ‰[Šp‚©‚ç•ûŒü—]Œ·s—ñ‚ðŽZo
+% dcm:•ûŒü—]Œ·s—ñAeuler:ƒIƒCƒ‰[Šp[rad]
+% z-y-xŒ`Ž®
 	s = sin(euler);
 	c = cos(euler);
 	dcm = [ c(2)*c(3),                 c(2)*s(3),                -s(2);...

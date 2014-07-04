@@ -1,21 +1,21 @@
 function [x, y, z] = blh2ecef(phi, ramda, height)
-	% ç·¯åº¦çµŒåº¦é«˜åº¦ã‹ã‚‰ECEFåº§æ¨™ã«å¤‰æ›
-	% ç·¯åº¦çµŒåº¦é«˜åº¦ã®ãƒ‰ã‚¤ãƒ„èªèª­ã¿ã®é ­æ–‡å­—BLH
-	% åœ°çƒä¸­å¿ƒåœ°çƒå›ºå®šåº§æ¨™ECEF(Earth Centered Earth Fixed)
-	% phi:ç·¯åº¦[deg]
-	% ramda:çµŒåº¦[deg]
-	% height:WGS84ã®å¹³å‡æµ·é¢é«˜åº¦[m]
-	% x,y,z:ECEFåº§æ¨™ã§ã®ä½ç½®[m]
-	% ////WGS84ã®å®šæ•°
-	pi_GPS = 3.1415926535898; % GPSé–¢é€£ã§ä½¿ã‚ã‚Œã‚‹Ï€ã®å®šæ•°
-	a = 6378137.0;	% WGS84ã®é•·è»¸[m]
-	one_f = 298.257223563;	% æ‰å¹³ç‡fã®1/fï¼ˆå¹³æ»‘åº¦ï¼‰
-	b = a * (1.0 - 1.0 / one_f);	% WGS84ã®çŸ­è»¸[m] b = 6356752.314245
-	e2 = (1.0 / one_f) * (2.0 - (1.0 / one_f));	% ç¬¬ä¸€é›¢å¿ƒç‡eã®2ä¹—
-	ed2 = (e2 * a * a / (b * b));	% ç¬¬äºŒé›¢å¿ƒç‡e'ã®2ä¹—
+	% ˆÜ“xŒo“x‚“x‚©‚çECEFÀ•W‚É•ÏŠ·
+	% ˆÜ“xŒo“x‚“x‚ÌƒhƒCƒcŒê“Ç‚İ‚Ì“ª•¶šBLH
+	% ’n‹…’†S’n‹…ŒÅ’èÀ•WECEF(Earth Centered Earth Fixed)
+	% phi:ˆÜ“x[deg]
+	% ramda:Œo“x[deg]
+	% height:WGS84‚Ì•½‹ÏŠC–Ê‚“x[m]
+	% x,y,z:ECEFÀ•W‚Å‚ÌˆÊ’u[m]
+	% ////WGS84‚Ì’è”
+	pi_GPS = 3.1415926535898; % GPSŠÖ˜A‚Åg‚í‚ê‚éƒÎ‚Ì’è”
+	a = 6378137.0;	% WGS84‚Ì’·²[m]
+	one_f = 298.257223563;	% G•½—¦f‚Ì1/fi•½ŠŠ“xj
+	b = a * (1.0 - 1.0 / one_f);	% WGS84‚Ì’Z²[m] b = 6356752.314245
+	e2 = (1.0 / one_f) * (2.0 - (1.0 / one_f));	% ‘æˆê—£S—¦e‚Ì2æ
+	ed2 = (e2 * a * a / (b * b));	% ‘æ“ñ—£S—¦e'‚Ì2æ
 	% n = inline(a / sqrt(1.0 - e2 * sin(deg2rad(phi))^2), 'phi');
-	n = a / sqrt(1.0 - e2 * sin(deg2rad(phi))^2);	% ãã®ç·¯åº¦ã§ã®WGS84æ¥•å††ä½“é«˜
-	% ///å®šæ•°å®šç¾©çµ‚äº†
+	n = a / sqrt(1.0 - e2 * sin(deg2rad(phi))^2);	% ‚»‚ÌˆÜ“x‚Å‚ÌWGS84‘È‰~‘Ì‚
+	% ///’è”’è‹`I—¹
 	x = (n + height) * cos(deg2rad(phi)) * cos(deg2rad(ramda));
 	y = (n + height) * cos(deg2rad(phi)) * sin(deg2rad(ramda));
 	z = (n * (1 - e2) + height) * sin(deg2rad(phi));

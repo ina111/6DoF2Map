@@ -1,6 +1,6 @@
 function euler = quat2euler(q)
-	% ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³ã‹ã‚‰ã‚ªã‚¤ãƒ©ãƒ¼è§’ã‚’è¨ˆç®—
-	% euler:ã‚ªã‚¤ãƒ©ãƒ¼è§’(roll,pitch yaw)[rad]ã€ q:ã‚¯ã‚©ãƒ¼ã‚¿ãƒ‹ã‚ªãƒ³
+	% ƒNƒH[ƒ^ƒjƒIƒ“‚©‚çƒIƒCƒ‰[Šp‚ğŒvZ
+	% euler:ƒIƒCƒ‰[Šp(roll,pitch yaw)[rad]A q:ƒNƒH[ƒ^ƒjƒIƒ“
 	q = quat_normalize(q);
 	q2 = q.^2;
 	euler = [atan2(2*(q(1)*q(2)+q(3)*q(4)), 1-2*(q2(2)+q2(3)));...

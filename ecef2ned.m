@@ -1,8 +1,8 @@
 function [n, e, d] = ecef2ned(x, y, z, xr, yr, zr)
-	% ECEFåº§æ¨™ã‹ã‚‰NEDåº§æ¨™ã¸å¤‰æ›ã‚’ã™ã‚‹
-	% ECEFåº§æ¨™ï¼šx,y,z[m]
-	% NEDåº§æ¨™ï¼šn,e,d[m]
-	% ECEFåº§æ¨™ä¸Šã®å‚ç…§ä½ç½®ï¼ˆå°„ç‚¹ï¼‰:xr,yr,zr[m]
+	% ECEFÀ•W‚©‚çNEDÀ•W‚Ö•ÏŠ·‚ğ‚·‚é
+	% ECEFÀ•WFx,y,z[m]
+	% NEDÀ•WFn,e,d[m]
+	% ECEFÀ•Wã‚ÌQÆˆÊ’uiË“_j:xr,yr,zr[m]
 	[phi, ramda, height] = ecef2blh(xr,yr,zr);
 	n = -sin(phi)*cos(ramda)*(x-xr) - sin(phi)sin(ramda)*(y-yr) + cos(phi)*(z-zr);
 	e = -sin(ramda)*(x-xr) + cos(ramda)*(y-yr);
