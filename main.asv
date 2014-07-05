@@ -20,7 +20,7 @@
 % - - - -
 % 2013年9月30日　稲川貴大
 % 2014年7月5日　稲川貴大　大きく変更
-clear all; close all;
+clear all
 
 addpath ./coordinate
 params

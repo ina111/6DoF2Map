@@ -41,7 +41,7 @@ function output = make_checksum_nmea(str)
 	num_str = length(str);
 	checksum = uint8(0);
 	for i = 1:num_str
-		if (str(i) != '$') && (str(i) != '!') && (str(i) != '*')
+		if (str(i) ~= '$') && (str(i) ~= '!') && (str(i) ~= '*')
 			checksum = bitxor(checksum, uint8(str(i))); % bit”‚Ì”r‘¼“I˜_—˜aXOR
 		end
 	end

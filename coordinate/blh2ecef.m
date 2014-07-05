@@ -1,12 +1,13 @@
 function [x, y, z] = blh2ecef(phi, ramda, height)
-	% 緯度経度高度からECEF座標に変換
-	% 緯度経度高度のドイツ語読みの頭文字BLH
-	% 地球中心地球固定座標ECEF(Earth Centered Earth Fixed)
-	% phi:緯度[deg]
-	% ramda:経度[deg]
-	% height:WGS84の平均海面高度[m]
-	% x,y,z:ECEF座標での位置[m]
-	% ////WGS84の定数
+% BLH2ECEF 緯度経度高度からECEF座標に変換
+    % 緯度経度高度のドイツ語読みの頭文字BLH
+    % 地球中心地球固定座標ECEF(Earth Centered Earth Fixed)
+    % @param phi:緯度[deg]
+    % @param ramda:経度[deg]
+    % @param height:WGS84の平均海面高度[m]
+    % @output x,y,z:ECEF座標での位置[m]
+    
+    % ////WGS84の定数
 	pi_GPS = 3.1415926535898; % GPS関連で使われるπの定数
 	a = 6378137.0;	% WGS84の長軸[m]
 	one_f = 298.257223563;	% 扁平率fの1/f（平滑度）
@@ -16,6 +17,7 @@ function [x, y, z] = blh2ecef(phi, ramda, height)
 	% n = inline(a / sqrt(1.0 - e2 * sin(deg2rad(phi))^2), 'phi');
 	n = a / sqrt(1.0 - e2 * sin(deg2rad(phi))^2);	% その緯度でのWGS84楕円体高
 	% ///定数定義終了
-	x = (n + height) * cos(deg2rad(phi)) * cos(deg2rad(ramda));
+
+    x = (n + height) * cos(deg2rad(phi)) * cos(deg2rad(ramda));
 	y = (n + height) * cos(deg2rad(phi)) * sin(deg2rad(ramda));
 	z = (n * (1 - e2) + height) * sin(deg2rad(phi));
